@@ -3,8 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Video } from "../types/video";
 import { getAdminVideos } from "../lib/adminVideos";
-import { supabase } from "../lib/supabase"; 
-
+import { supabase } from "../lib/supabase";
 type Category = {
   id: string;
   name: string;
@@ -107,13 +106,12 @@ export default function Home() {
       setVideos(data);
     });
  
-    const supabase = createClient();
     supabase
-      .from("categories")
-      .select("id, name, description")
-      .then(({ data }) => {
-        if (data) setCategoriesData(data as Category[]);
-      });
+    .from("categories")
+    .select("id, name, description")
+    .then(({ data }) => {
+      if (data) setCategoriesData(data as Category[]);
+    });
   }, []);
  
   useEffect(() => {
