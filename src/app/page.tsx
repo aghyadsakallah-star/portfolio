@@ -3,6 +3,13 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Video } from "../types/video";
 import { getAdminVideos } from "../lib/adminVideos";
+import { createClient } from "../lib/supabase/client";
+ 
+type Category = {
+  id: string;
+  name: string;
+  description: string | null;
+};
  
 import {
   FaInstagram,
@@ -46,6 +53,7 @@ function getVimeoId(url: string) {
  
 export default function Home() {
   const [videos, setVideos] = useState<Video[]>([]);
+  const [categoriesData, setCategoriesData] = useState<Category[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [sliderIndex, setSliderIndex] = useState<Record<string, number>>({});
   const [visibleCount, setVisibleCount] = useState(5);
@@ -98,6 +106,14 @@ export default function Home() {
     getAdminVideos().then((data) => {
       setVideos(data);
     });
+ 
+    const supabase = createClient();
+    supabase
+      .from("categories")
+      .select("id, name, description")
+      .then(({ data }) => {
+        if (data) setCategoriesData(data as Category[]);
+      });
   }, []);
  
   useEffect(() => {
@@ -357,9 +373,16 @@ export default function Home() {
                     <h2 className="text-2xl font-black tracking-tight md:text-4xl">
                       {category}
                     </h2>
-                    <p className="mt-2.5 max-w-md text-sm leading-6 text-[#9CA3AF] md:text-base">
-                      High-converting direct response ads built for modern brands & social media campaigns.
-                    </p>
+                    {(() => {
+                      const catDesc = categoriesData.find(
+                        (c) => c.name === category
+                      )?.description;
+                      return catDesc ? (
+                        <p className="mt-2.5 max-w-md text-sm leading-6 text-[#9CA3AF] md:text-base">
+                          {catDesc}
+                        </p>
+                      ) : null;
+                    })()}
                   </div>
  
                   {needsSlider && (
