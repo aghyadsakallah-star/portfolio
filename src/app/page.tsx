@@ -3,8 +3,8 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Video } from "../types/video";
 import { getAdminVideos } from "../lib/adminVideos";
-import { createClient } from "../lib/supabase/client";
- 
+import { supabase } from "../lib/supabase"; 
+
 type Category = {
   id: string;
   name: string;
